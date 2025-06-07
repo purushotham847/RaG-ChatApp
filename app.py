@@ -9,6 +9,7 @@ from langchain.schema.messages import AIMessage
 from dotenv import load_dotenv
 import os
 import traceback
+import torch
 
 
 load_dotenv()
@@ -16,7 +17,16 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 tavily = TavilyClient(api_key=TAVILY_API_KEY)
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2", 
+    model_kwargs={"device": device}  
+)
 
 st.set_page_config(page_title="RAGX", page_icon="🤖", layout="wide")
 st.title("🤖 AI Chat Application")
